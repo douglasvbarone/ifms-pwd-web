@@ -37,7 +37,7 @@ export async function updatePassword({
   username: string
   password: string
   newPassword: string
-}) {
+}): Promise<'SUCCESS' | 'FAIL'> {
   try {
     const userDN = await getUserDN(username)
     await ldapClient.bind(userDN, password)
@@ -58,9 +58,12 @@ export async function updatePassword({
         })
       })
     ])
+
+    return 'SUCCESS'
   } catch (err) {
     console.error(err)
   } finally {
     await ldapClient.unbind()
   }
+  return 'FAIL'
 }

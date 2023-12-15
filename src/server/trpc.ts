@@ -1,29 +1,44 @@
-import { initTRPC, TRPCError } from "@trpc/server";
-import * as trpcExpress from "@trpc/server/adapters/express";
+import { initTRPC, TRPCError } from '@trpc/server'
+import * as trpcExpress from '@trpc/server/adapters/express'
 
-import { z } from "zod";
+import { z } from 'zod'
+import { updatePassword } from './lib/updatePassword'
 
-export const { procedure, router } = initTRPC.create();
+export const { procedure, router } = initTRPC.create()
 
-const { query, mutation, input } = procedure;
+const { query, input } = procedure
 
 export const appRouter = router({
   hello: query(async () => {
-    return "Hello World!";
+    return 'Hello World!'
   }),
 
   updatePassword: input(
     z.object({
       username: z.string(),
       password: z.string(),
-      newPassword: z.string().min(8),
+      newPassword: z.string().min(8)
     })
-  ).mutation(async () => {}),
-});
+  ).mutation(async ({ input }) => {
+    const { username, password, newPassword } = input
+    try {
+      await updatePassword({
+        username,
+        password,
+        newPassword
+      })
+    } catch (err: any) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: err.message
+      })
+    }
+  })
+})
 
 // export type definition of API
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter
 
 export const trpcMiddleware = trpcExpress.createExpressMiddleware({
-  router: appRouter,
-});
+  router: appRouter
+})
