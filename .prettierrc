@@ -1,0 +1,14 @@
+{
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": "*.js, *.vue, *.css, *.scss",
+      "excludeFiles": "**/dist/**, **/node_modules/**"
+    }
+  ]
+}
