@@ -20,6 +20,8 @@ export const appRouter = router({
       newPassword: z.string().min(8)
     })
   ).mutation(async ({ input }) => {
+    console.log('input', input)
+
     const { username, password, newPassword } = input
     try {
       await updatePassword({

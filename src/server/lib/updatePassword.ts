@@ -1,4 +1,10 @@
-import { Client, Change, Attribute } from 'ldapts'
+import {
+  Client,
+  Change,
+  Attribute,
+  InvalidCredentialsError,
+  UnwillingToPerformError
+} from 'ldapts'
 import { encodePassword } from './encodePassword'
 
 const ldapClient = new Client({
@@ -40,7 +46,10 @@ export async function updatePassword({
 }): Promise<'SUCCESS' | 'FAIL'> {
   try {
     const userDN = await getUserDN(username)
+
     await ldapClient.bind(userDN, password)
+
+    console.log('binded')
 
     await ldapClient.modify(userDN, [
       new Change({
@@ -60,10 +69,21 @@ export async function updatePassword({
     ])
 
     return 'SUCCESS'
-  } catch (err) {
-    console.error(err)
+  } catch (err: any) {
+    console.log(err)
+
+    if (err instanceof InvalidCredentialsError) {
+      throw new Error('Usuário ou senha atual incorreta.')
+    }
+
+    if (err instanceof UnwillingToPerformError) {
+      throw new Error(
+        'A senha atual está correta, mas o servidor recusou a alteração. Verifique se a nova senha atende aos requisitos de complexidade.'
+      )
+    } else throw err
   } finally {
     await ldapClient.unbind()
+    console.log('unbinded')
   }
   return 'FAIL'
 }
