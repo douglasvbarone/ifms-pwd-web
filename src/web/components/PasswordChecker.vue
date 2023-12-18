@@ -1,15 +1,15 @@
 <template>
   <div>
+    <div class="font-weight-light mb-2">Regras para a nova senha:</div>
     <v-alert
       v-for="alert in alerts"
       :key="alert.text"
       :type="alertType(password, alert.rule)"
-      class="mb-1"
+      class="mb-2 rule"
       variant="tonal"
       density="compact"
-    >
-      {{ alert.text }}
-    </v-alert>
+      :text="alert.text"
+    />
   </div>
 </template>
 
@@ -44,3 +44,9 @@ const alerts = [
   }
 ]
 </script>
+
+<style scoped>
+.rule {
+  transition: all 0.2s ease-in-out;
+}
+</style>

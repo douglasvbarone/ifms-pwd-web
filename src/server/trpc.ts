@@ -16,15 +16,16 @@ export const appRouter = router({
   updatePassword: input(
     z.object({
       username: z.string(),
-      password: z.string(),
+      currentPassword: z.string(),
       newPassword: z.string().min(8)
     })
   ).mutation(async ({ input }) => {
-    const { username, password, newPassword } = input
+    const { username, currentPassword, newPassword } = input
+
     try {
       await updatePassword({
         username,
-        password,
+        currentPassword,
         newPassword
       })
 

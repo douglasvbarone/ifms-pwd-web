@@ -39,18 +39,18 @@ async function getUserDN(username: string): Promise<string> {
 
 export async function updatePassword({
   username,
-  password,
+  currentPassword,
   newPassword
 }: {
   username: string
-  password: string
+  currentPassword: string
   newPassword: string
 }): Promise<'SUCCESS' | 'FAIL'> {
   try {
     const userDN = await getUserDN(username)
 
     // Check if user can bind with current password
-    await ldapClient.bind(userDN, password)
+    await ldapClient.bind(userDN, currentPassword)
     await ldapClient.unbind()
 
     // Bind with admin user to change password
@@ -68,7 +68,7 @@ export async function updatePassword({
       //   operation: 'delete',
       //   modification: new Attribute({
       //     type: 'unicodePwd',
-      //     values: [encodePassword(password)]
+      //     values: [encodePassword(currentPassword)]
       //   })
       // }),
 

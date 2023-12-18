@@ -1,6 +1,6 @@
 <template>
-  <v-form @submit.prevent="submit">
-    <v-card :elevation="2">
+  <v-form ref="form" @submit.prevent="submit" validate-on="input">
+    <v-card :elevation="2" :loading="loading" :disabled="loading">
       <v-card-title class="mb-6 pa-6 text-center">
         <span class="headline font-weight-light text-h4">Trocar senha</span>
       </v-card-title>
@@ -13,7 +13,7 @@
           autocomplete="username"
           hint="SIAPE para servidores, CPF para alunos."
           prepend-inner-icon="mdi-account"
-          :rules="[v => !!v || 'Campo obrigatório']"
+          :rules="[v => !!v || 'O usuário é obrigatório']"
           required
           density="compact"
         />
@@ -27,7 +27,7 @@
           prepend-inner-icon="mdi-form-textbox-password"
           :append-inner-icon="showCurrent ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append-inner="showCurrent = !showCurrent"
-          :rules="[v => !!v || 'Campo obrigatório']"
+          :rules="[v => !!v || 'A senha atual é obrigatória']"
           required
           density="compact"
         />
@@ -42,7 +42,7 @@
           prepend-inner-icon="mdi-lock-check"
           :append-inner-icon="showNew ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append-inner="showNew = !showNew"
-          :rules="[v => !!v || 'Campo obrigatório']"
+          :rules="newPasswordRules"
           required
           density="compact"
         />
@@ -56,7 +56,7 @@
           :append-inner-icon="showConfirm ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append-inner="showConfirm = !showConfirm"
           :rules="[
-            v => !!v || 'Campo obrigatório',
+            v => !!v || 'A confirmação da senha é obrigatória',
             v => v === newPassword || 'As senhas não coincidem'
           ]"
           required
@@ -66,17 +66,29 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn type="submit" color="primary">Trocar senha</v-btn>
+        <v-btn
+          type="submit"
+          color="primary"
+          variant="flat"
+          size="large"
+          :disabled="!valid || loading"
+        >
+          Trocar senha
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-form>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import PasswordChecker from './PasswordChecker.vue'
 
 const emit = defineEmits<{
   submit: [{ username: string; currentPassword: string; newPassword: string }]
+}>()
+
+defineProps<{
+  loading: boolean
 }>()
 
 const username = ref('')
@@ -88,11 +100,32 @@ const showCurrent = ref(false)
 const showNew = ref(false)
 const showConfirm = ref(false)
 
-const submit = () => {
-  emit('submit', {
-    username: username.value,
-    currentPassword: password.value,
-    newPassword: newPassword.value
-  })
+// use form refs to validate
+const form = ref<HTMLFormElement | null>(null)
+
+const valid = computed(() => {
+  return form.value?.isValid || false
+})
+
+const newPasswordRules = [
+  (v: string) => !!v || 'A nova senha é obrigatória',
+  (v: string) =>
+    /[a-z]/.test(v) || 'A nova senha deve ter pelo menos uma letra minúscula',
+  (v: string) =>
+    /[A-Z]/.test(v) || 'A nova senha deve ter pelo menos uma letra maiúscula',
+  (v: string) =>
+    v.length >= 8 || 'A nova senha deve ter pelo menos 8 caracteres',
+  (v: string) =>
+    /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(v) ||
+    'A nova senha deve ter pelo menos um caractere especial'
+]
+
+async function submit() {
+  if (await form.value?.validate())
+    emit('submit', {
+      username: username.value,
+      currentPassword: password.value,
+      newPassword: newPassword.value
+    })
 }
 </script>
