@@ -1,19 +1,18 @@
 <template>
   <v-app>
     <v-main>
-      {{ data }}
+      <router-view />
+      <v-footer app class="text-grey">
+        <span class="mr-2">v{{ version }}</span>
+        <v-spacer />
+        <span class="mr-2">SERTI-PP</span>
+      </v-footer>
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import packageInfo from '../../package.json'
 
-import { trpc } from "./trpc";
-
-const data = ref<string>("");
-
-onMounted(async () => {
-  data.value = await trpc.hello.query();
-});
+const version = packageInfo.version
 </script>
