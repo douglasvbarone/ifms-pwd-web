@@ -36,9 +36,7 @@ async function handleSubmit({
   } catch (error) {
     console.error(error)
   } finally {
-    setTimeout(() => {
-      loading.value = false
-    }, 1000)
+    loading.value = false
   }
 }
 </script>
