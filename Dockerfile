@@ -13,12 +13,6 @@ RUN npm install
 
 COPY . .
 
-# Initialize prisma
-RUN npx prisma generate
-
-# migrate database
-RUN npx prisma migrate deploy
-
 # Build app source
 RUN npm run build
 
@@ -28,7 +22,5 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 ENV PORT=80
 
 EXPOSE 80
-
-
 
 CMD [ "npm", "start" ]
