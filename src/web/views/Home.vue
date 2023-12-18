@@ -2,8 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="8" offset="2">
-        <logo class="mx-auto mb-12" :style="{ maxWidth: '256px' }" />
-
+        <logo class="mx-auto my-3" :style="{ maxWidth: '128px' }" />
         <main-form @submit="submit" />
       </v-col>
     </v-row>

@@ -1,12 +1,12 @@
 <template>
   <v-form @submit.prevent="submit">
-    <v-card :elevation="12">
+    <v-card :elevation="2">
       <v-card-title class="mb-6 pa-6 text-center">
         <span class="headline font-weight-light text-h4">Trocar senha</span>
       </v-card-title>
       <v-card-text>
         <v-text-field
-          class="mb-8"
+          class="mb-4"
           v-model="username"
           label="Usuário"
           :variant="'outlined'"
@@ -15,9 +15,10 @@
           prepend-inner-icon="mdi-account"
           :rules="[v => !!v || 'Campo obrigatório']"
           required
+          density="compact"
         />
         <v-text-field
-          class="mb-8"
+          class="mb-4"
           v-model="password"
           label="Senha atual"
           :type="showCurrent ? 'text' : 'password'"
@@ -28,6 +29,7 @@
           @click:append-inner="showCurrent = !showCurrent"
           :rules="[v => !!v || 'Campo obrigatório']"
           required
+          density="compact"
         />
 
         <v-text-field
@@ -42,9 +44,9 @@
           @click:append-inner="showNew = !showNew"
           :rules="[v => !!v || 'Campo obrigatório']"
           required
+          density="compact"
         />
         <v-text-field
-          class="mb-8"
           v-model="confirmPassword"
           label="Confirme a nova senha"
           :type="showConfirm ? 'text' : 'password'"
@@ -53,9 +55,14 @@
           prepend-inner-icon="mdi-lock-check"
           :append-inner-icon="showConfirm ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append-inner="showConfirm = !showConfirm"
-          :rules="[v => !!v || 'Campo obrigatório']"
+          :rules="[
+            v => !!v || 'Campo obrigatório',
+            v => v === newPassword || 'As senhas não coincidem'
+          ]"
           required
+          density="compact"
         />
+        <password-checker class="mt-4" :password="newPassword" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -66,6 +73,7 @@
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue'
+import PasswordChecker from './PasswordChecker.vue'
 
 const emit = defineEmits<{
   submit: [{ username: string; currentPassword: string; newPassword: string }]
