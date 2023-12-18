@@ -8,26 +8,30 @@ import {
 import { encodePassword } from './encodePassword'
 
 const ldapClient = new Client({
-  url: process.env.LDAP_URL || 'ldap://10.1.0.16'
+  url: process.env.AD_URL || 'ldaps://10.1.0.16',
+  tlsOptions: {
+    requestCert: true
+  }
 })
 
-const bindUser = process.env.AD_BIND_USER || ''
-const bindPassword = process.env.AD_BIND_PASSWORD || ''
+const adminUser = process.env.AD_BIND_USER || ''
+const adminPassword = process.env.AD_BIND_PASSWORD || ''
 const baseDN = process.env.AD_BASE_DN || ''
 
 async function getUserDN(username: string): Promise<string> {
   try {
-    await ldapClient.bind(bindUser, bindPassword)
+    await ldapClient.bind(adminUser, adminPassword)
 
     const { searchEntries } = await ldapClient.search(baseDN, {
-      scope: 'sub',
       attributes: ['dn'],
       filter: `(sAMAccountName=${username})`
     })
 
+    console.log('searchEntries', searchEntries)
+
     return searchEntries[0]?.dn
   } catch (err) {
-    console.error(err)
+    console.error('Error finding user:', err)
   } finally {
     await ldapClient.unbind()
   }
@@ -47,31 +51,41 @@ export async function updatePassword({
   try {
     const userDN = await getUserDN(username)
 
+    // Check if user can bind with current password
     await ldapClient.bind(userDN, password)
+    await ldapClient.unbind()
 
-    console.log('binded')
+    // Bind with admin user to change password
+    await ldapClient.bind(adminUser, adminPassword)
 
     await ldapClient.modify(userDN, [
       new Change({
-        operation: 'delete',
-        modification: new Attribute({
-          type: 'unicodePwd',
-          values: [encodePassword(password)]
-        })
-      }),
-      new Change({
-        operation: 'add',
+        operation: 'replace',
         modification: new Attribute({
           type: 'unicodePwd',
           values: [encodePassword(newPassword)]
         })
       })
+      // new Change({
+      //   operation: 'delete',
+      //   modification: new Attribute({
+      //     type: 'unicodePwd',
+      //     values: [encodePassword(password)]
+      //   })
+      // }),
+
+      // new Change({
+      //   operation: 'add',
+      //   modification: new Attribute({
+      //     type: 'unicodePwd',
+      //     values: [encodePassword(newPassword)]
+      //   })
+      // })
     ])
 
     return 'SUCCESS'
   } catch (err: any) {
     console.log(err)
-
     if (err instanceof InvalidCredentialsError) {
       throw new Error('Usuário ou senha atual incorreta.')
     }
@@ -80,10 +94,12 @@ export async function updatePassword({
       throw new Error(
         'A senha atual está correta, mas o servidor recusou a alteração. Verifique se a nova senha atende aos requisitos de complexidade.'
       )
-    } else throw err
+    } else {
+      console.log('Error updating password')
+    }
+    throw err
   } finally {
     await ldapClient.unbind()
     console.log('unbinded')
   }
-  return 'FAIL'
 }

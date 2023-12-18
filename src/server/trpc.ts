@@ -29,6 +29,8 @@ export const appRouter = router({
         password,
         newPassword
       })
+
+      return 'SUCCESS'
     } catch (err: any) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
