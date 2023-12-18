@@ -27,8 +27,6 @@ async function getUserDN(username: string): Promise<string> {
       filter: `(sAMAccountName=${username})`
     })
 
-    console.log('searchEntries', searchEntries)
-
     return searchEntries[0]?.dn
   } catch (err) {
     console.error('Error finding user:', err)
@@ -85,7 +83,6 @@ export async function updatePassword({
 
     return 'SUCCESS'
   } catch (err: any) {
-    console.log(err)
     if (err instanceof InvalidCredentialsError) {
       throw new Error('Usuário ou senha atual incorreta.')
     }
@@ -94,12 +91,11 @@ export async function updatePassword({
       throw new Error(
         'A senha atual está correta, mas o servidor recusou a alteração. Verifique se a nova senha atende aos requisitos de complexidade.'
       )
-    } else {
-      console.log('Error updating password')
     }
+
+    console.log('Unexpected error:', err)
     throw err
   } finally {
     await ldapClient.unbind()
-    console.log('unbinded')
   }
 }
