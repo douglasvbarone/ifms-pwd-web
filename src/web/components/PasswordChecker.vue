@@ -4,7 +4,7 @@
       v-for="alert in alerts"
       :key="alert.text"
       :type="alertType(password, alert.rule)"
-      class="mb-2 rule"
+      class="rule"
       variant="plain"
       density="compact"
       :text="alert.text"
