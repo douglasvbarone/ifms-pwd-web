@@ -110,6 +110,9 @@ const valid = computed(() => {
 const newPasswordRules = [
   (v: string) => !!v || 'A nova senha é obrigatória',
   (v: string) =>
+    v != password.value || 'A nova senha deve ser diferente da atual',
+
+  (v: string) =>
     /[a-z]/.test(v) || 'A nova senha deve ter pelo menos uma letra minúscula',
   (v: string) =>
     /[A-Z]/.test(v) || 'A nova senha deve ter pelo menos uma letra maiúscula',
