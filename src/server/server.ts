@@ -11,6 +11,7 @@ const limiter = rateLimit({
 const server = express()
 
 server.use(cors())
+server.set('trust proxy', 1)
 server.use(limiter)
 server.use('/trpc', trpcMiddleware)
 
