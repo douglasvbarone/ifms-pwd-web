@@ -39,7 +39,7 @@
           :type="showNew ? 'text' : 'password'"
           hint="A nova senha que você deseja usar"
           :variant="'outlined'"
-          prepend-inner-icon="mdi-lock-check"
+          prepend-inner-icon="mdi-lock"
           :append-inner-icon="showNew ? 'mdi-eye' : 'mdi-eye-off'"
           @click:append-inner="showNew = !showNew"
           :rules="newPasswordRules"
