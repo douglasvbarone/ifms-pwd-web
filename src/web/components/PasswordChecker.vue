@@ -33,7 +33,7 @@ const alerts = [
     rule: (password: string) => /[A-Z]/.test(password)
   },
   {
-    text: 'Ao manos um número.',
+    text: 'Ao menos um número.',
     rule: (password: string) => /\d/.test(password)
   },
   {

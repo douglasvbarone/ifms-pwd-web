@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" @submit.prevent="submit" validate-on="input">
+  <v-form ref="form" @submit.prevent="submit" validate-on="input lazy">
     <v-card :elevation="2" :loading="loading" :disabled="loading">
       <v-card-title class="mb-6 pa-6 text-center">
         <span class="headline font-weight-light text-h4">Trocar senha</span>
@@ -113,6 +113,7 @@ const newPasswordRules = [
     /[a-z]/.test(v) || 'A nova senha deve ter pelo menos uma letra minúscula',
   (v: string) =>
     /[A-Z]/.test(v) || 'A nova senha deve ter pelo menos uma letra maiúscula',
+  (v: string) => /\d/.test(v) || 'A nova senha deve ter pelo menos um número',
   (v: string) =>
     v.length >= 8 || 'A nova senha deve ter pelo menos 8 caracteres',
   (v: string) =>
