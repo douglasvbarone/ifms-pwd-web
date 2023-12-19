@@ -46,6 +46,10 @@ async function handleSubmit({
       currentPassword,
       newPassword
     })
+
+    alert('Senha alterada com sucesso!')
+
+    location.reload()
   } catch (error: any) {
     console.error(error)
 
