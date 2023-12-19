@@ -1,12 +1,11 @@
 <template>
   <div>
-    <div class="font-weight-light mb-2">Regras para a nova senha:</div>
     <v-alert
       v-for="alert in alerts"
       :key="alert.text"
       :type="alertType(password, alert.rule)"
       class="mb-2 rule"
-      variant="tonal"
+      variant="plain"
       density="compact"
       :text="alert.text"
     />
@@ -26,19 +25,23 @@ function alertType(password: string, rule: (password: string) => boolean) {
 
 const alerts = [
   {
-    text: 'Uma ou mais letras minúsculas.',
+    text: 'Ao menos uma letra minúscula.',
     rule: (password: string) => /[a-z]/.test(password)
   },
   {
-    text: 'Uma ou mais letras maiúsculas.',
+    text: 'Ao menos uma letra maiúsculas.',
     rule: (password: string) => /[A-Z]/.test(password)
   },
   {
-    text: '8 ou mais caracteres.',
+    text: 'Ao manos um número.',
+    rule: (password: string) => /\d/.test(password)
+  },
+  {
+    text: 'Ter 8 ou mais caracteres de comprimento.',
     rule: (password: string) => password.length >= 8
   },
   {
-    text: `Um ou mais caracteres especiais (!"#$%&'()*+,\\-./:;<=>?@[]^_\`{}|~).`,
+    text: `Ao menos um símbolo especiai (!"#$%&'()*+,\\-./:;<=>?@[]^_\`{}|~).`,
     rule: (password: string) =>
       /[●!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)
   }

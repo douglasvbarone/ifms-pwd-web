@@ -27,14 +27,17 @@ async function getUserDN(username: string): Promise<string> {
       filter: `(sAMAccountName=${username})`
     })
 
-    return searchEntries[0]?.dn
+    const userDN = searchEntries[0]?.dn
+
+    if (!userDN) throw new InvalidCredentialsError('Usuário não encontrado')
+
+    return userDN
   } catch (err) {
     console.error('Error finding user:', err)
+    throw err
   } finally {
     await ldapClient.unbind()
   }
-
-  throw new Error('User not found')
 }
 
 export async function updatePassword({

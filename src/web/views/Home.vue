@@ -3,6 +3,15 @@
     <v-row justify="center">
       <v-col xl="5" lg="6" md="7" sm="10">
         <logo class="mx-auto my-3" :style="{ maxWidth: '128px' }" />
+        <v-alert
+          class="mb-2"
+          variant="tonal"
+          closable
+          type="error"
+          v-if="errorMsg"
+        >
+          {{ errorMsg }}
+        </v-alert>
         <main-form @submit="handleSubmit" :loading="loading" />
       </v-col>
     </v-row>
@@ -17,6 +26,8 @@ import { trpc } from '../trpc'
 
 const loading = ref(false)
 
+const errorMsg = ref('')
+
 async function handleSubmit({
   username,
   currentPassword,
@@ -28,13 +39,17 @@ async function handleSubmit({
 }) {
   try {
     loading.value = true
+    errorMsg.value = ''
+
     await trpc.updatePassword.mutate({
       username,
       currentPassword,
       newPassword
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
+
+    errorMsg.value = error.message
   } finally {
     loading.value = false
   }
