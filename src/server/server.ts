@@ -1,18 +1,25 @@
-import express from "express";
-import { trpcMiddleware } from "./trpc";
-import cors from "cors";
+import express from 'express'
+import { trpcMiddleware } from './trpc'
+import cors from 'cors'
+import { rateLimit } from 'express-rate-limit'
 
-const server = express();
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100 // limit each IP to 100 requests per windowMs
+})
 
-server.use(cors());
-server.use("/trpc", trpcMiddleware);
+const server = express()
 
-if (process.env.NODE_ENV == "production") {
-  server.use("/", express.static("dist/web"));
+server.use(cors())
+server.use(limiter)
+server.use('/trpc', trpcMiddleware)
 
-  server.get("*", (req, res) => {
-    res.sendFile("index.html", { root: "dist/web" });
-  });
+if (process.env.NODE_ENV == 'production') {
+  server.use('/', express.static('dist/web'))
+
+  server.get('*', (req, res) => {
+    res.sendFile('index.html', { root: 'dist/web' })
+  })
 }
 
-export { server };
+export { server }
