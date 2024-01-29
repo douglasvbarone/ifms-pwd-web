@@ -118,10 +118,10 @@ const newPasswordRules = [
     /[A-Z]/.test(v) || 'A nova senha deve ter pelo menos uma letra maiúscula',
   (v: string) => /\d/.test(v) || 'A nova senha deve ter pelo menos um número',
   (v: string) =>
-    v.length >= 8 || 'A nova senha deve ter pelo menos 8 caracteres',
-  (v: string) =>
-    /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(v) ||
-    'A nova senha deve ter pelo menos um caractere especial'
+    v.length >= 8 || 'A nova senha deve ter pelo menos 8 caracteres'
+  // (v: string) =>
+  //   /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(v) ||
+  //   'A nova senha deve ter pelo menos um caractere especial'
 ]
 
 async function submit() {
