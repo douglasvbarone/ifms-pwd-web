@@ -39,12 +39,12 @@ const alerts = [
   {
     text: 'Ter 8 ou mais caracteres de comprimento.',
     rule: (password: string) => password.length >= 8
-  },
-  {
-    text: `Ao menos um símbolo especiai (!"#$%&'()*+,\\-./:;<=>?@[]^_\`{}|~).`,
-    rule: (password: string) =>
-      /[●!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)
   }
+  // {
+  //   text: `Ao menos um símbolo especiai (!"#$%&'()*+,\\-./:;<=>?@[]^_\`{}|~).`,
+  //   rule: (password: string) =>
+  //     /[●!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)
+  // }
 ]
 </script>
 
