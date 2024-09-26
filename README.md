@@ -6,12 +6,12 @@ npm install
 
 ### Compiles and hot-reloads for development
 
-# npm
-
-npm run dev
+`npm run dev`
 
 ### Compiles and minifies for production
 
-# npm
+`npm run build`
 
-npm run build
+### Run the compiled code
+
+`npm start`
