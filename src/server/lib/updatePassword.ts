@@ -49,6 +49,12 @@ export async function updatePassword({
   currentPassword: string
   newPassword: string
 }): Promise<'SUCCESS' | 'FAIL'> {
+  if (!username || !currentPassword || !newPassword)
+    throw new Error('Informe o usuário, senha antiga e senha nova.')
+
+  if (currentPassword === newPassword)
+    throw new Error('A nova senha não pode ser igual à senha antiga.')
+
   try {
     const userDN = await getUserDN(username)
 
