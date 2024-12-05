@@ -15,12 +15,12 @@ server.set('trust proxy', 1)
 server.use(limiter)
 server.use('/trpc', trpcMiddleware)
 
-server.get('/proxy', (request, response) =>
+server.get('/proxy', (request, response) => {
   response.json({
     xForwardedFor: request.headers['x-forwarded-for'] || 'No-IP-Header-Found',
     ip: request.ip
   })
-)
+})
 
 if (process.env.NODE_ENV == 'production') {
   server.use('/', express.static('dist/web'))
