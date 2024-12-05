@@ -3,7 +3,8 @@ import {
   Change,
   Attribute,
   InvalidCredentialsError,
-  UnwillingToPerformError
+  UnwillingToPerformError,
+  NoSuchObjectError
 } from 'ldapts'
 import { encodePassword } from './encodePassword'
 
@@ -29,7 +30,7 @@ async function getUserDN(username: string): Promise<string> {
 
     const userDN = searchEntries[0]?.dn
 
-    if (!userDN) throw new InvalidCredentialsError('Usuário não encontrado')
+    if (!userDN) throw new NoSuchObjectError('Usuário não encontrado')
 
     return userDN
   } catch (err) {
@@ -49,6 +50,12 @@ export async function updatePassword({
   currentPassword: string
   newPassword: string
 }): Promise<'SUCCESS' | 'FAIL'> {
+  if (!username || !currentPassword || !newPassword)
+    throw new Error('Informe o usuário, senha antiga e senha nova.')
+
+  if (currentPassword === newPassword)
+    throw new Error('A nova senha não pode ser igual à senha antiga.')
+
   try {
     const userDN = await getUserDN(username)
 
@@ -83,7 +90,10 @@ export async function updatePassword({
 
     return 'SUCCESS'
   } catch (err: any) {
-    if (err.message.includes('data 525')) console.log('Usuário não encontrado')
+    if (err instanceof NoSuchObjectError) {
+      console.log(`Usuário ${username} não encontrado.`)
+      throw new Error('Usuário inexistente ou senha atual incorreta.')
+    }
 
     if (err.message.includes('data 533'))
       throw new Error('Usuário desativado. Procure o SERTI do seu campus.')
