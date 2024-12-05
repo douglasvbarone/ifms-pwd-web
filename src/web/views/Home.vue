@@ -3,15 +3,17 @@
     <v-row justify="center">
       <v-col xl="5" lg="6" md="7" sm="10">
         <logo class="mx-auto my-3" :style="{ maxWidth: '128px' }" />
-        <v-alert
-          class="mb-2"
-          variant="tonal"
-          closable
-          type="error"
-          v-if="errorMsg"
-        >
-          {{ errorMsg }}
-        </v-alert>
+        <v-scale-transition>
+          <v-alert
+            class="mb-2"
+            variant="tonal"
+            closable
+            type="error"
+            v-if="errorMsg"
+          >
+            {{ errorMsg }}
+          </v-alert>
+        </v-scale-transition>
         <main-form @submit="handleSubmit" :loading="loading" />
       </v-col>
     </v-row>
