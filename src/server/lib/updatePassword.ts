@@ -52,9 +52,16 @@ export async function updatePassword({
   try {
     const userDN = await getUserDN(username)
 
-    // Check if user can bind with current password
-    await ldapClient.bind(userDN, currentPassword)
-    await ldapClient.unbind()
+    try {
+      // Check if user can bind with current password
+      await ldapClient.bind(userDN, currentPassword)
+      await ldapClient.unbind()
+    } catch (err: any) {
+      // Verify if is a ERROR_PASSWORD_MUST_CHANGE error
+      if (!err.message.includes('data 773')) {
+        throw err
+      }
+    }
 
     // Bind with admin user to change password
     await ldapClient.bind(adminUser, adminPassword)
