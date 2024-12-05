@@ -55,12 +55,17 @@ export async function updatePassword({
     try {
       // Check if user can bind with current password
       await ldapClient.bind(userDN, currentPassword)
-      await ldapClient.unbind()
     } catch (err: any) {
       // Verify if is a ERROR_PASSWORD_MUST_CHANGE error
       if (!err.message.includes('data 773')) {
         throw err
       }
+      // Verify if is a ERROR_PASSWORD_EXPIRED error
+      if (!err.message.includes('data 532')) {
+        throw err
+      }
+    } finally {
+      await ldapClient.unbind()
     }
 
     // Bind with admin user to change password
@@ -74,32 +79,27 @@ export async function updatePassword({
           values: [encodePassword(newPassword)]
         })
       })
-      // new Change({
-      //   operation: 'delete',
-      //   modification: new Attribute({
-      //     type: 'unicodePwd',
-      //     values: [encodePassword(currentPassword)]
-      //   })
-      // }),
-
-      // new Change({
-      //   operation: 'add',
-      //   modification: new Attribute({
-      //     type: 'unicodePwd',
-      //     values: [encodePassword(newPassword)]
-      //   })
-      // })
     ])
 
     return 'SUCCESS'
   } catch (err: any) {
-    if (err instanceof InvalidCredentialsError) {
-      throw new Error('Usuário ou senha atual incorreta.')
-    }
+    if (err.message.includes('data 525')) console.log('Usuário não encontrado')
+
+    if (err.message.includes('data 533'))
+      throw new Error('Usuário desativado. Procure o SERTI do seu campus.')
+
+    if (err.message.includes('data 701'))
+      throw new Error('Usuário expirou. Procure o SERTI do seu campus.')
+
+    if (err.message.includes('data 775'))
+      throw new Error('Usuário bloqueado. Procure o SERTI do seu campus.')
+
+    if (err instanceof InvalidCredentialsError)
+      throw new Error('Usuário inexistente ou senha atual incorreta.')
 
     if (err instanceof UnwillingToPerformError) {
       throw new Error(
-        'A senha atual está correta, mas o servidor recusou a alteração. Verifique se a nova senha atende aos requisitos de complexidade.'
+        'A senha atual está correta, mas o servidor recusou a alteração. Verifique se a nova senha atende aos requisitos de complexidade. Não reutilize senhas antigas.'
       )
     }
 
