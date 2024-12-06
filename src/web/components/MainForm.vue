@@ -1,9 +1,6 @@
 <template>
-  <v-form ref="form" @submit.prevent="submit" validate-on="input lazy">
-    <v-card :elevation="2" :loading="loading" :disabled="loading">
-      <v-card-title class="mb-6 pa-6 text-center">
-        <span class="headline font-weight-light text-h4">Trocar senha</span>
-      </v-card-title>
+  <v-form ref="form" @submit.prevent="submit" validate-on="input">
+    <v-card :elevation="1" :loading="loading" :disabled="loading">
       <v-card-text>
         <v-text-field
           class="mb-4"
