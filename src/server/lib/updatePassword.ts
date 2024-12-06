@@ -53,6 +53,8 @@ export async function updatePassword({
   if (!username || !currentPassword || !newPassword)
     throw new Error('Informe o usuário, senha antiga e senha nova.')
 
+  console.log(`\n*** Updating password for ${username} ***`)
+
   if (currentPassword === newPassword)
     throw new Error('A nova senha não pode ser igual à senha antiga.')
 
@@ -88,6 +90,8 @@ export async function updatePassword({
       })
     ])
 
+    console.log(`*** Password updated successfully for ${username} ***`)
+
     return 'SUCCESS'
   } catch (err: any) {
     if (err instanceof NoSuchObjectError) {
@@ -104,10 +108,13 @@ export async function updatePassword({
     if (err.message.includes('data 775'))
       throw new Error('Usuário bloqueado. Procure o SERTI do seu campus.')
 
-    if (err instanceof InvalidCredentialsError)
+    if (err instanceof InvalidCredentialsError) {
+      console.log(`*** InvalidCredentialsError for ${username} ***`)
       throw new Error('Usuário inexistente ou senha atual incorreta.')
+    }
 
     if (err instanceof UnwillingToPerformError) {
+      console.log('*** UnwillingToPerformError ***')
       throw new Error(
         'A senha atual está correta, mas o servidor recusou a alteração. Verifique se a nova senha atende aos requisitos de complexidade. Não reutilize senhas antigas.'
       )
@@ -116,6 +123,7 @@ export async function updatePassword({
     console.log('Unexpected error:', err)
     throw err
   } finally {
+    console.log('*** Finished updating password ***\n')
     await ldapClient.unbind()
   }
 }
