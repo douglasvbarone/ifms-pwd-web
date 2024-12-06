@@ -2,7 +2,10 @@
   <v-container>
     <v-row justify="center">
       <v-col :style="{ maxWidth: '420px' }">
-        <logo class="mx-auto my-3" :style="{ maxWidth: '128px' }" />
+        <logo class="mx-auto my-4" :style="{ maxWidth: '128px' }" />
+        <div class="my-3 headline font-weight-light text-h5 text-center">
+          Trocar senha
+        </div>
         <v-scale-transition>
           <v-alert
             class="mb-2"
