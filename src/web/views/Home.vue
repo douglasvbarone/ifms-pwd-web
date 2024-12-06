@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col xl="5" lg="6" md="7" sm="10">
+      <v-col :style="{ maxWidth: '420px' }">
         <logo class="mx-auto my-3" :style="{ maxWidth: '128px' }" />
         <v-scale-transition>
           <v-alert
