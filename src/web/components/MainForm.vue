@@ -27,6 +27,7 @@
           :rules="[v => !!v || 'A senha atual é obrigatória']"
           required
           density="compact"
+          autocomplete="current-password"
         />
 
         <v-text-field
@@ -42,6 +43,7 @@
           :rules="newPasswordRules"
           required
           density="compact"
+          autocomplete="new-password"
         />
         <v-text-field
           v-model="confirmPassword"
@@ -58,6 +60,7 @@
           ]"
           required
           density="compact"
+          autocomplete="new-password"
         />
         <password-checker class="mt-4" :password="newPassword" />
       </v-card-text>
