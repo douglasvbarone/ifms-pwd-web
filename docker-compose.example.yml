@@ -1,0 +1,12 @@
+services:
+  ifms-pwd-web:
+    build:
+      context: .
+
+    ports:
+      - '80:80'
+    environment:
+      - AD_BIND_USER=ifms\usuario_admin
+      - AD_BIND_PASSWORD=senha_do_usuario_admin
+      - AD_URL=ldaps://ip_do_servidor_ldap
+      - AD_BASE_DN=dc=ifms,dc=edu,dc=br
