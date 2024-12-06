@@ -67,12 +67,17 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
+          class="px-4"
           type="submit"
           color="primary"
           variant="flat"
           size="large"
           :disabled="!valid || loading"
+          :loading="loading"
         >
+          <template v-slot:prepend>
+            <v-icon>mdi-lock-reset</v-icon>
+          </template>
           Trocar senha
         </v-btn>
       </v-card-actions>
