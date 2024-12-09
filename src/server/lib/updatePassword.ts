@@ -61,22 +61,33 @@ export async function updatePassword({
   try {
     const userDN = await getUserDN(username)
 
+    let oldPasswordOK = false
+
     try {
       // Check if user can bind with current password
       await ldapClient.bind(userDN, currentPassword)
+      oldPasswordOK = true
     } catch (err: any) {
+      console.log(err.message)
+
       // Verify if is a ERROR_PASSWORD_MUST_CHANGE error
-      if (!err.message.includes('data 773')) {
-        throw err
+      if (err.message.includes('data 773')) {
+        console.log('*** Password must change flag ON')
+        oldPasswordOK = true
       }
       // Verify if is a ERROR_PASSWORD_EXPIRED error
-      if (!err.message.includes('data 532')) {
-        throw err
+      if (err.message.includes('data 532')) {
+        console.log('*** Password expired')
+        oldPasswordOK = true
       }
     } finally {
       await ldapClient.unbind()
     }
 
+    if (!oldPasswordOK) {
+      console.log('*** Current password is incorrect ***')
+      throw new InvalidCredentialsError('Current password is incorrect')
+    }
     // Bind with admin user to change password
     await ldapClient.bind(adminUser, adminPassword)
 
